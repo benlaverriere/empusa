@@ -13,26 +13,21 @@ let colorwheel = {
   fragmentShader:
     "\
     precision mediump float;\
-    uniform sampler2D u_image_a;\
-    uniform sampler2D u_image_b;\
-    uniform float mix;\
+    uniform sampler2D u_image;\
+    uniform float r;\
+    uniform float g;\
+    uniform float b;\
     varying vec2 v_texCoord;\
     varying float v_mix;\
     void main(){\
-        vec4 color_a = texture2D(u_image_a, v_texCoord);\
-        vec4 color_b = texture2D(u_image_b, v_texCoord);\
-        color_a[0] *= (1.0 - mix);\
-        color_a[1] *= (1.0 - mix);\
-        color_a[2] *= (1.0 - mix);\
-        color_a[3] *= (1.0 - mix);\
-        color_b[0] *= mix;\
-        color_b[1] *= mix;\
-        color_b[2] *= mix;\
-        color_b[3] *= mix;\
-        gl_FragColor = color_a + color_b;\
+        vec4 gel = vec4(vec3(r/255.0, g/255.0, b/255.0), 255.0);\
+        vec4 color = texture2D(u_image, v_texCoord);\
+        gl_FragColor = color * gel;\
     }",
   properties: {
-    percentOffset: { type: "uniform", value: 0.0 },
+    r: { type: "uniform", value: 255.0 },
+    g: { type: "uniform", value: 255.0 },
+    b: { type: "uniform", value: 255.0 },
   },
   inputs: ["u_image"],
 };

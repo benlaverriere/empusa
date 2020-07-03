@@ -1,8 +1,8 @@
 import VideoContext from "videocontext";
-//import colorwheel from "colorwheel";
+import COLORWHEEL from "./colorwheel";
 
 var canvas = document.getElementById("canvas");
-const { CROSSFADE, MONOCHROME } = VideoContext.DEFINITIONS;
+const { MONOCHROME } = VideoContext.DEFINITIONS;
 
 function rgbToOutputMix(r, g, b) {
   return [r / 255.0, g / 255.0, b / 255.0];
@@ -20,40 +20,46 @@ function colorOverlayEffectNode(r, g, b) {
   return effectNode;
 }
 
-function crossfadeNode() {
-  var crossfadeEffect = videoCtx.transition(CROSSFADE);
-
-  //Setup the transition. This will change the "mix" property of the cross-fade node from 0.0 to 1.0.
-  //Transision mix value from 0.0 to 1.0 at time=8 over a period of 2 seconds to time=10.
-  crossfadeEffect.transition(8.0, 10.0, 0.0, 1.0, "mix");
-  return crossfadeEffect;
-}
-
 var videoCtx = new VideoContext(canvas);
 var videoNode = videoCtx.video(
   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
   20, // start offset (seconds)
   4, // preload time (seconds)
-  { volume: 0.2, loop: true }
+  { volume: 0.0, loop: true }
 );
 videoNode.connect(videoCtx.destination);
 videoNode.start(0);
 
-const orangeGel = colorOverlayEffectNode(252, 115, 3);
-const redGel = colorOverlayEffectNode(153, 23, 23);
-const greenGel = colorOverlayEffectNode(17, 194, 97);
-const blueGel = colorOverlayEffectNode(64, 110, 201);
-const colorwheel = crossfadeNode();
+const orangegel = [252, 115, 3];
+const redgel = [153, 23, 23];
+const greengel = [17, 194, 97];
+const bluegel = [64, 110, 201];
+const colorcycle = [orangegel, redgel, greengel, bluegel];
+let colorIndex = 0;
+
+const colorwheel = videoCtx.transition(COLORWHEEL);
+colorwheel.r = colorcycle[colorIndex][0];
+colorwheel.g = colorcycle[colorIndex][1];
+colorwheel.b = colorcycle[colorIndex][2];
+const fromTime = 0.0;
+const maxDuration = 3.0; // durations vary because of imprecision, but we should have a certain amount of "hang time" on each color
+const cycleTime = 5.0 * 1000;
+
+setInterval(() => {
+  const fromColor = colorcycle[colorIndex];
+  colorIndex = (colorIndex + 1) % colorcycle.length;
+  const toColor = colorcycle[colorIndex];
+  const toTime = fromTime + Math.random() * maxDuration;
+  console.log(
+    `[transition] ${fromColor} ---[${toTime - fromTime}]--> ${toColor}`
+  );
+  colorwheel.transition(fromTime, toTime, fromColor[0], toColor[0], "r");
+  colorwheel.transition(fromTime, toTime, fromColor[1], toColor[1], "g");
+  colorwheel.transition(fromTime, toTime, fromColor[2], toColor[2], "b");
+}, cycleTime);
 
 // Set up the processing chain.
-videoNode.connect(orangeGel);
-videoNode.connect(redGel);
-videoNode.connect(greenGel);
-videoNode.connect(blueGel);
-
-orangeGel.connect(colorwheel);
-redGel.connect(colorwheel);
-
+videoNode.connect(colorwheel);
 colorwheel.connect(videoCtx.destination);
 
 videoCtx.play();
