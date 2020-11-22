@@ -22,6 +22,8 @@
     "prettier": "2.2.0"
   },
   "husky": {
-    "precommit": "prettier -w ."
+    "hooks": {
+      "pre-commit": "prettier -w ."
+    }
   }
 }
