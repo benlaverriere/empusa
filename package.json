@@ -9,7 +9,8 @@
   "private": false,
   "scripts": {
     "start": "parcel serve ./src/index.html",
-    "build": "parcel build ./src/index.html"
+    "build": "parcel build ./src/index.html",
+    "lint": "prettier -w . && yarn run eslint ."
   },
   "dependencies": {
     "videocontext": "^0.54.0"
