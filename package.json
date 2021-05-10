@@ -20,7 +20,7 @@
     "eslint-config-prettier": "^6.15.0",
     "husky": "^4.3.0",
     "parcel": "^2.0.0-nightly.453",
-    "prettier": "2.2.0"
+    "prettier": "2.3.0"
   },
   "husky": {
     "hooks": {
