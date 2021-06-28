@@ -19,7 +19,7 @@
     "eslint": "^7.14.0",
     "eslint-config-prettier": "^6.15.0",
     "husky": "^4.3.0",
-    "parcel": "^2.0.0-nightly.453",
+    "parcel": "^2.0.0-nightly.734",
     "prettier": "2.2.0"
   },
   "husky": {
